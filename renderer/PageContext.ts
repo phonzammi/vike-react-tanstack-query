@@ -1,4 +1,4 @@
-import { DehydratedState, FetchQueryOptions } from "@tanstack/react-query"
+import type { DehydratedState, FetchQueryOptions } from "@tanstack/react-query"
 
 // https://vike.dev/pageContext#typescript
 declare global {

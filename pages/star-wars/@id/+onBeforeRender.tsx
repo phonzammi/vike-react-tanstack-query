@@ -1,47 +1,53 @@
 // https://vike.dev/onBeforeRender
 export { onBeforeRender }
 
-import fetch from 'cross-fetch'
-import { filterMovieData } from '../filterMovieData'
-import type { OnBeforeRenderAsync, PageContextClient, PageContextServer } from 'vike/types'
-import type { MovieDetails } from '../types'
-import { render } from 'vike/abort'
-import React from 'react'
+import type { OnBeforeRenderAsync } from 'vike/types'
+import useQueriesState from '../../../stores/queriesState'
+import { QueryClient, dehydrate, hashKey } from '@tanstack/react-query'
+import { moviesQueries } from '../moviesQueries'
 
-const onBeforeRender: OnBeforeRenderAsync = async (
-  pageContext: PageContextServer | PageContextClient
-): ReturnType<OnBeforeRenderAsync> => {
-  const dataUrl = `https://star-wars.brillout.com/api/films/${pageContext.routeParams?.id}.json`
-  let movie: MovieDetails
-  try {
-    const response = await fetch(dataUrl)
-    movie = (await response.json()) as MovieDetails
-  } catch (err) {
-    console.error(err)
-    //*/
-    throw render(503, `Couldn't fetch data, because failed HTTP GET request to ${dataUrl}`)
-    /*/
-    throw render(
-      503,
-      <>
-        Couldn't fetch data, because failed HTTP GET request to <code>{dataUrl}</code>.
-      </>
-    )
-    //*/
+const onBeforeRender: OnBeforeRenderAsync = async (pageContext): ReturnType<OnBeforeRenderAsync> => {
+  const { routeParams: { id } } = pageContext
+  const { knownQueries, knownTitles } = useQueriesState.getState()
+  const hashedQueryKey = hashKey(moviesQueries.detail(id).queryKey)
+
+  let title = knownTitles.get(hashedQueryKey) ?? "Star Wars Movie Details"
+
+  if (!knownQueries.get(hashedQueryKey)) {
+    console.log('/movies/@id/+onBeforeRender is fetching id : ', id)
+
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          gcTime: 5000
+        }
+      }
+    })
+
+    const movie = await queryClient.fetchQuery(moviesQueries.detail(id))
+
+    useQueriesState.setState((prev) => ({
+      knownTitles: new Map(prev.knownTitles).set(hashedQueryKey, movie.title)
+    }))
+
+    const dehydratedState = dehydrate(queryClient)
+
+    return {
+      pageContext: {
+        dehydratedState,
+        pageProps: {
+          id,
+        },
+        title: movie.title
+      }
+    }
   }
-
-  // We remove data we don't need because we pass `pageContext.movie` to
-  // the client; we want to minimize what is sent over the network.
-  movie = filterMovieData(movie)
-
-  const { title } = movie
 
   return {
     pageContext: {
       pageProps: {
-        movie
+        id
       },
-      // The page's <title>
       title
     }
   }

@@ -10,7 +10,7 @@ export default async function onBeforeRender(pageContext: PageContextBuiltInServ
     const hashedQueryKey = hashKey(postsQueries.detail(id).queryKey)
 
     // Get custom title based on knownTitles, (known after the query is fetched).
-    let title = knownTitles.get(hashedQueryKey) ?? "Post Detail";
+    let title = knownTitles.get(hashedQueryKey) ?? "Post Details";
 
     if (!knownQueries.get(hashedQueryKey)) {
         // We haven't started fetching the post with this id yet.
@@ -20,7 +20,7 @@ export default async function onBeforeRender(pageContext: PageContextBuiltInServ
         // another page through client-side navigation, this gets executed on
         // the client. Otherwise it gets executed on the server.
 
-        console.log('posts/id/+onBeforeRender is fetching... id : ', id)
+        console.log('/posts/@id/+onBeforeRender is fetching id : ', id)
 
         const queryClient = new QueryClient({
             defaultOptions: {

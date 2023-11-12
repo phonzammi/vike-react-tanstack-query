@@ -9,7 +9,7 @@ export async function getPosts(): Promise<Post[]> {
     return posts
 }
 
-export async function getPost(id: number | string): Promise<Post> {
+export async function getPost(id: string): Promise<Post> {
     const response = await axios(`https://jsonplaceholder.typicode.com/posts/${id}`)
 
     const post: Post = await response.data

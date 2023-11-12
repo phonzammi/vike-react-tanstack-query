@@ -21,8 +21,9 @@ function PageShell({ pageContext, children }: { pageContext: PageContext; childr
                 <Logo />
                 <Link href="/">Welcome</Link>
                 <Link href="/markdown">Markdown</Link>
-                <Link href="/star-wars">Data Fetching</Link>
                 <Link href="/hello">Routing</Link>
+                <hr />
+                <Link href="/star-wars">Star Wars</Link>
                 <Link href="/posts">Posts</Link>
               </Sidebar>
               <Content>{children}</Content>

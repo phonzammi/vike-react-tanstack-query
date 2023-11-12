@@ -22,7 +22,6 @@ const Page = ({ id }: { id: string }) => {
     return (
         <>
             <i>isLoading : {`${postQuery.isLoading}`}</i>
-            <h1>Post detail</h1>
             <h2>{postQuery.data?.title}</h2>
             <p>{postQuery.data?.body}</p>
 

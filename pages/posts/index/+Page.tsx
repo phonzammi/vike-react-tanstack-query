@@ -16,13 +16,14 @@ const Page = () => {
         }))
     }, [hashedQueryKey, postsQuery.isFetched])
 
+    if(postsQuery.isSuccess)
     return (
         <>
             <i>isLoading : {`${postsQuery.isLoading}`}</i>
-            <h1>Posts</h1>
+            <h1>{postsQuery.data.length} Posts List</h1>
 
             <ol>
-                {postsQuery.data?.map(({ id, title }) => (
+                {postsQuery.data.map(({ id, title }) => (
                     <li key={id}>
                         <a href={`/posts/${id}`}>{title}</a>
                     </li>
