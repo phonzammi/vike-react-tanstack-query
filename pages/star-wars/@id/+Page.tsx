@@ -10,12 +10,10 @@ function Page({ id }: { id: string }) {
   const movieQuery = useMovieQuery(id)
 
   useEffect(() => {
-    if (movieQuery.isSuccess) {
       useQueriesState.setState((prev) => ({
         knownQueries: prev.knownQueries.set(hashedQueryKey, movieQuery.isFetched),
-        knownTitles: prev.knownTitles.set(hashedQueryKey, movieQuery.data.title)
       }))
-    }
+      document.title = movieQuery.data?.title || "Star Wars Movie Details"
   }, [hashedQueryKey, movieQuery])
 
   if (movieQuery.isError) return <h3>Error {movieQuery.error.message}</h3>
